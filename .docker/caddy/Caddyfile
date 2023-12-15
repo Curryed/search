@@ -1,0 +1,15 @@
+{
+	{$DEBUG}
+}
+
+search.localdev
+
+log
+
+tls internal
+
+route {
+	root * /app/public
+	php_fastcgi php:9000
+	file_server
+}

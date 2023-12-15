@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  elastic:
+    image: elasticsearch:8.11.3
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=false
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+    ports:
+      - "9200:9200"
+
+  php:
+    image: php:8.3-fpm-alpine3.19
+    environment:
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes:
+      - "./src:/src"
+    working_dir: /src
+
+  caddy:
+    image: caddy:2.4.5-alpine
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ./.docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    working_dir: /src
+    depends_on:
+      - php
+
+volumes:
+  caddy_data:
+  caddy_config:

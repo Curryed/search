@@ -1,0 +1,39 @@
+{
+    "name": "nerea.enrique/search",
+    "type": "project",
+    "require": {
+        "jolicode/elastically": "^1.8",
+        "symfony/framework-bundle": "^7.0",
+        "symfony/flex": "^2.4",
+        "symfony/console": "^7.0",
+        "symfony/runtime": "^7.0",
+        "symfony/dotenv": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "NereaEnrique\\Search\\": "src/",
+            "NereaEnrique\\Search\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nerea Enrique",
+            "email": "nerea.enrique@ekino.com"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^7.0"
+    }
+}
