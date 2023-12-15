@@ -3,8 +3,72 @@ services:
         autowire: true
         autoconfigure: true
 
+#    _instanceof:
+#        NereaEnrique\Search\ElasticSearch\DataFixtures\FixtureLoaderInterface:
+#            tags: ['app.fixture_loader']
+
     NereaEnrique\Search\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
+            - '../src/Kernel.php'
+
+#    App\ElasticSearch\SearchNegotiator:
+#        arguments: [!tagged { tag: 'app.searcher', default_index_method: 'getName' }]
+#
+#    App\ElasticSearch\FixtureLoaderNegotiator:
+#        arguments: [!tagged { tag: 'app.fixture_loader', default_index_method: 'getIndexName' }]
+#
+    JoliCode\Elastically\IndexNameMapper:
+        arguments:
+            $prefix: null
+            $indexClassMapping:
+                books: NereaEnrique\Search\Book
+
+    JoliCode\Elastically\Serializer\StaticContextBuilder:
+        arguments:
+            $mapping:
+                NereaEnrique\Search\Book: []
+
+#    JoliCode\Elastically\ResultSetBuilder:
+#        arguments:
+#            $indexNameMapper: '@JoliCode\Elastically\IndexNameMapper'
+#            $contextBuilder: '@JoliCode\Elastically\Serializer\StaticContextBuilder'
+#            $denormalizer: '@serializer'
+
+    JoliCode\Elastically\Client:
+        arguments:
+            $config:
+                host: '%env(string:ELASTICSEARCH_HOST)%'
+                port: '%env(int:ELASTICSEARCH_PORT)%'
+                transport: '%env(string:ELASTICSEARCH_PROTOCOL)%'
+                username: '%env(string:ELASTICSEARCH_USERNAME)%'
+                password: '%env(string:ELASTICSEARCH_PASSWORD)%'
+                auth_type: 'basic'
+                curl:
+                  !php/const \CURLOPT_SSL_VERIFYPEER: '%env(bool:ELASTICSEARCH_SSL_VERIFY)%'
+                  !php/const \CURLOPT_SSL_VERIFYHOST: '%env(int:ELASTICSEARCH_SSL_VERIFY)%'
+                elastically_mappings_directory: '%kernel.project_dir%/config/index'
+                elastically_index_class_mapping:
+                    eqt_society: App\Dto\Group\SocietyDto
+                    eqt_community: App\Dto\Group\CommunityDto
+                    eqt_investor: App\Dto\Group\InvestorDto
+                    eqt_certification: App\Dto\Group\CertificationDto
+                    eqt_support_structure: App\Dto\Group\SupportStructureDto
+                elastically_serializer: '@serializer'
+                elastically_bulk_size: 100
+            $logger: '@logger'
+            $indexNameMapper: '@JoliCode\Elastically\IndexNameMapper'
+
+    JoliCode\Elastically\Indexer:
+        arguments:
+            $client: '@JoliCode\Elastically\Client'
+            $serializer: '@serializer'
+            $bulkMaxSize: 100
+            $bulkRequestParams: []
+            $contextBuilder: '@JoliCode\Elastically\Serializer\StaticContextBuilder'
+
+    JoliCode\Elastically\Mapping\YamlProvider:
+        arguments:
+            $configurationDirectory: '%kernel.project_dir%/config/index'
