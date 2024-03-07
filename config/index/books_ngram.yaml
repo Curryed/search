@@ -1,0 +1,40 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "analysis": {
+      "analyzer": {
+        "token_ngram": {
+          "tokenizer": "my_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "my_tokenizer": {
+          "type": "ngram",
+          "min_gram": 1,
+          "max_gram": 1,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text"
+      },
+      "kind": {
+        "type": "text"
+      },
+      "author": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "token_ngram"
+      }
+    }
+  }
+}

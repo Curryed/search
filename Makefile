@@ -8,7 +8,7 @@ elastic:
 	docker-compose exec --user root -e LINES=$$(tput lines) -e COLUMNS=$$(tput cols) elastic bash
 
 php:
-	docker-compose exec --user www-user -e LINES=$$(tput lines) -e COLUMNS=$$(tput cols) php bash
+	docker-compose exec --user www-data -e LINES=$$(tput lines) -e COLUMNS=$$(tput cols) php /bin/sh
 
 docker run --rm --env discovery.type=single-node --env cluster.name=docker-cluster --env bootstrap.memory_lock=false --env xpack.security.enabled=true --env "ES_JAVA_OPTS=-Xms512m -Xmx512m" --env ELASTIC_PASSWORD=admin -p 9200:9200 docker.elastic.co/elasticsearch/elasticsearch:8.6.2
 docker run --rm --env discovery.type=single-node --env bootstrap.memory_lock=false --env xpack.security.enabled=true --env ELASTIC_PASSWORD=admin -p 9200:9200 docker.elastic.co/elasticsearch/elasticsearch:8.6.2

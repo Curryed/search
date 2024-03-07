@@ -1,13 +1,21 @@
 {
   "settings": {
-    "number_of_shards": 1
+    "number_of_shards": 1,
   },
   "mappings": {
     "properties": {
-      "title": { "type": "text" },
-      "kind": { "type": "text" },
-      "author": { "type": "text" },
-      "description": { "type": "text" }
+      "title": {
+        "type": "text",
+      },
+      "kind": {
+        "type": "text",
+      },
+      "author": {
+        "type": "text",
+      },
+      "description": {
+        "type": "text",
+      }
     }
   }
 }

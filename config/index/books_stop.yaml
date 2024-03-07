@@ -1,0 +1,38 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "analysis": {
+      "filter": {
+        "my_stop": {
+          "type": "stop",
+          "language": "english"
+        },
+      },
+      "analyzer": {
+        "my_stop": {
+          "tokenizer": "standard",
+          "filter": [
+            "my_stop"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text"
+      },
+      "kind": {
+        "type": "text"
+      },
+      "author": {
+        "type": "text"
+      },
+      "description": {
+          "type": "text",
+          "analyzer": "my_stop"
+      }
+    }
+  }
+}

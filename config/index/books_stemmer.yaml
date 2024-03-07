@@ -1,0 +1,38 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "analysis": {
+      "filter": {
+        "my_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        },
+      },
+      "analyzer": {
+        "my_stemmer": {
+          "tokenizer": "standard",
+          "filter": [
+            "my_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text"
+      },
+      "kind": {
+        "type": "text"
+      },
+      "author": {
+        "type": "text"
+      },
+      "description": {
+          "type": "text",
+          "analyzer": "my_stemmer"
+      }
+    }
+  }
+}

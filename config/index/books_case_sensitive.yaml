@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "analysis": {
+      "analyzer": {
+        "whitespace_lowercase": {
+          "tokenizer": "whitespace",
+          "filter": [ "lowercase" ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "analyzer": "whitespace_lowercase"
+      },
+      "kind": {
+        "type": "text",
+        "analyzer": "whitespace_lowercase"
+      },
+      "author": {
+        "type": "text",
+        "analyzer": "whitespace_lowercase"
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "whitespace_lowercase"
+      }
+    }
+  }
+}

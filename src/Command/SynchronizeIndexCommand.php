@@ -8,7 +8,12 @@ use JoliCode\Elastically\Client;
 use JoliCode\Elastically\Index;
 use JoliCode\Elastically\Mapping\YamlProvider;
 use NereaEnrique\Search\ElasticSearch\DataFixtures\Books;
+use NereaEnrique\Search\ElasticSearch\Index\BooksCaseSensitiveIndex;
+use NereaEnrique\Search\ElasticSearch\Index\BooksEdgeNgramIndex;
 use NereaEnrique\Search\ElasticSearch\Index\BooksIndex;
+use NereaEnrique\Search\ElasticSearch\Index\BooksNgramIndex;
+use NereaEnrique\Search\ElasticSearch\Index\BooksStemmerIndex;
+use NereaEnrique\Search\ElasticSearch\Index\BooksStopIndex;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +28,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class SynchronizeIndexCommand extends Command
 {
+    public const INDEXES = [
+        BooksIndex::NAME,
+        BooksCaseSensitiveIndex::NAME,
+        BooksEdgeNgramIndex::NAME,
+        BooksNgramIndex::NAME,
+        BooksStemmerIndex::NAME,
+        BooksStopIndex::NAME,
+    ];
+
     public function __construct(
         private readonly Client $client,
         private readonly YamlProvider $yamlMappingProvider,
@@ -33,18 +47,24 @@ final class SynchronizeIndexCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $indexConfiguration = $this->getIndexConfiguration();
-        $index = $this->client->getIndex(BooksIndex::NAME);
-        $this->createIndex($index, $indexConfiguration);
-
-        $this->loadFixtures();
+        foreach (self::INDEXES as $indexName) {
+            $this->prepareAndCreateIndex($indexName);
+            $this->loadFixtures($indexName);
+        }
 
         return Command::SUCCESS;
     }
 
-    private function getIndexConfiguration(): array
+    private function prepareAndCreateIndex(string $indexName): void
     {
-        return $this->yamlMappingProvider->provideMapping(BooksIndex::NAME, ['filename' => BooksIndex::NAME.'.yaml']);
+        $indexConfiguration = $this->getIndexConfiguration($indexName);
+        $index = $this->client->getIndex($indexName);
+        $this->createIndex($index, $indexConfiguration);
+    }
+
+    private function getIndexConfiguration(string $indexName): array
+    {
+        return $this->yamlMappingProvider->provideMapping($indexName, ['filename' => $indexName.'.yaml']);
     }
 
     private function createIndex(Index $index, array $indexConfiguration): void
@@ -56,8 +76,8 @@ final class SynchronizeIndexCommand extends Command
         $index->create($indexConfiguration);
     }
 
-    private function loadFixtures(): void
+    private function loadFixtures(string $indexName): void
     {
-        $this->booksFixtures->load();
+        $this->booksFixtures->load($indexName);
     }
 }
